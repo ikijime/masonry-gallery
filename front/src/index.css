@@ -1,0 +1,50 @@
+:root {
+  --blue: #1e90ff;
+  --white: #ffffff;
+  --xiketic: #0C020F;
+  --toxic-green: #C7EF00;
+  --ming-light: #54a8af;
+  --ming: #3C787E;
+  --grayxgray: #BBBBBF;
+  --dirty-orange: #D56F3E;
+  --minion-yellow: #FFE74C;
+  --outer-space: #2D383A;
+}
+
+body {
+  margin: 0;
+  background-color: var(--xiketic);
+  color: var(--grayxgray);
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans' ,
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: Menlo, Monaco, Helve Consolas, 'Courier New',
+    monospace;
+}
+
+a:link {
+  color: hotpink;
+  text-decoration: none;
+}
+
+/* visited link */
+a:visited {
+  color: hotpink;
+}
+
+/* mouse over link */
+a:hover {
+  color: rgb(255, 166, 210);
+  text-decoration: underline;
+}
+
+/* selected link */
+a:active {
+  color: rgb(204, 85, 145);
+  text-decoration: underline;
+}

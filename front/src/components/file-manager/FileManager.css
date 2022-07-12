@@ -1,0 +1,99 @@
+body {
+  font-size: 18px;
+}
+
+.item-container-link {
+  margin-top: 5px;
+  margin-left: 5px;
+}
+
+.remove-button {
+  margin-left: 10px;
+  cursor: pointer;
+  color: rgb(214, 65, 65);
+  opacity: 50%;
+  text-decoration: overline;
+}
+
+.remove-button:hover {
+  opacity: 100%;
+  text-decoration: overline;
+}
+
+.bottom-menu-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.filemanager-menu {
+    display: flex;
+    justify-content: space-between;
+    gap: 5px;
+}
+
+.filemanager-container {
+  margin:auto;
+  max-width: 1200px;
+}
+
+.filemanager-tree {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+}
+
+.filemager-path {
+  margin-left: 50px;
+  font-size: 0.9em;
+  color: rgb(119, 45, 82);
+}
+
+.folder-icon {
+  display: inline;
+  height: 20px;
+}
+
+.item-container {
+  display: grid;
+  grid-template-areas: "item-container-main" "item-container-bottom";
+  background-color: rgba(22, 22, 22, 0.2);
+  margin: 5px;
+}
+
+.item-container:nth-child(odd) {
+  background-color: rgba(22, 22, 22, 0.5);
+  margin-bottom: 5px;
+}
+
+.item-container-main {
+  grid-area: item-container-main;
+  align-self: center;
+}
+
+.item-container-bottom {
+  grid-area: item-container-bottom;
+  align-self: end;
+  justify-items: end;
+  margin-top: 5px;
+  background-color: rgba(30, 30, 30, 1);
+}
+
+.filemager-path {
+  margin-left: 50px;
+  font-size: 0.9em;
+  color: rgb(119, 45, 82);
+}
+
+.filemanager-folder-container {
+  background-color: #36122a;
+}
+
+@media only screen and (min-width: 1200px) {  
+  .filemanager-tree {
+    column-gap: 10px;
+  }
+}
+
