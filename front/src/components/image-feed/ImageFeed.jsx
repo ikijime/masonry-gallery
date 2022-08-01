@@ -1,6 +1,7 @@
 import "./ImageFeed.css";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
+import Slider from "react-touch-drag-slider";
 
 export default function Imagefeed() {
   const [page, setPage] = useState(1);
@@ -92,8 +93,8 @@ export default function Imagefeed() {
     }
     
     if (e.keyCode === 27) setSliderToogle(!sliderToogle);
-    if (e.keyCode === 39) next();
-    if (e.keyCode === 37) prev();
+    // if (e.keyCode === 39) next();
+    // if (e.keyCode === 37) prev();
   }
 
   function handleTouchStart(e) {
@@ -105,13 +106,9 @@ export default function Imagefeed() {
     let touchEndX = e.changedTouches[0].pageX;
     let touchEndY = e.changedTouches[0].pageY;
 
-    let deltaX = touchStartX - touchEndX;
+    // let deltaX = touchStartX - touchEndX;
     let deltaY = touchEndY - touchStartY;
 
-    console.log(deltaY);
-    console.log("delta x is ", deltaX);
-
-    console.log(Document.fullscreenElement);
     if (deltaY > 100) {
       if (document.fullscreenElement) {
         document.exitFullscreen();
@@ -122,13 +119,13 @@ export default function Imagefeed() {
       document.documentElement.requestFullscreen();
     }
 
-    if (deltaX > 120) {
-      prev();
-    }
+    // if (deltaX > 120) {
+    //   prev();
+    // }
 
-    if (deltaX < -120) {
-      next();
-    }
+    // if (deltaX < -120) {
+    //   next();
+    // }
   }
 
   if (sliderToogle) {
@@ -140,28 +137,45 @@ export default function Imagefeed() {
   return (
     <>
       {sliderToogle && (
-        <>
-          <div
-            style={{ zIndex: "11" }}
-            className="prev"
-            onClick={prev}
-            tabIndex="39"
-          ></div>
+        <>                      <div
+        style={{ zIndex: "11" }}
+        className="prev"
+        onClick={prev}
+        tabIndex="39"
+      ></div>
           <div
             className="slider"
             onClick={() => {
-              // document.exitFullscreen();
               setSliderToogle(!sliderToogle);
             }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
-            <div className="slider-img" style={{ zIndex: "10" }}>
-              <img
-                style={{ zIndex: "10" }}
-                src={`${staticAddr}/${images[imgIndex].filepath}/${images[imgIndex].name}`}
-              />
-            </div>
+
+            <Slider
+              onSlideComplete={(i) => {
+                console.log(i);
+                setImgIndex(i);
+                // console.log('finished dragging, current slide is', i)
+              }}
+              onSlideStart={(i) => {
+                // console.log('started dragging on slide', i)
+              }}
+              activeIndex={imgIndex}
+              threshHold={100}
+              transition={0.3}
+              scaleOnDrag={false}
+            >
+              {images.map((image, index) => (
+                  <img 
+                  src={`${staticAddr}${image.filepath}/${image.name}`}
+                  key={index}
+                  loading="lazy"
+                />
+                )
+            )}
+            </Slider>
+            
           </div>
           <div style={{ zIndex: "11" }} className="next" onClick={next}></div>
         </>
@@ -194,6 +208,7 @@ export default function Imagefeed() {
                 src={`${staticAddr}${imagepath}/thumbnails/${image.name}`}
                 fullimagelink={`${staticAddr}${imagepath}/${image.name}`}
                 onClick={(e) => handlerImgClick(e, images.indexOf(image))}
+                loading="lazy"
               />
             </div>
           );
