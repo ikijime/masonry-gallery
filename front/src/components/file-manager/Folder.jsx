@@ -7,8 +7,9 @@ export default function Folder(props) {
     setPath(e.target.attributes.href.value);
   };
 
-  const removeFolderHandle = (e) => {
-    console.log("remove folder");
+  const removeFolderHandle = (path) => {
+    console.log(path);
+    
   };
 
   const newPath = path === "" ? path : path + "/";
@@ -44,7 +45,7 @@ export default function Folder(props) {
         </span>
         <span
           className="remove-button"
-          onClick={() => removeFolderHandle(`${newPath}`)}
+          onClick={() => removeFolderHandle(`${newPath}${folder.name}`)}
         >
           <svg
             viewBox="64 64 896 896"

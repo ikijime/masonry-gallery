@@ -6,9 +6,9 @@ setup:
 	sqlite3 /db/images.db ".read 01_migratin.sql"
 
 migrate:
-	if test -f db/images.db; then rm db/images.db; fi;
-	touch db/images.db
-	sqlite3 db/images.db ".read db/01_migration.sql"
+	rm -f ./db/images.db;
+	touch ./db/images.db
+	sqlite3 ./db/images.db ".read ./db/01_migration.sql"
 
 clean:
 	# find public/static/files/ -maxdepth 5 -type f -delete

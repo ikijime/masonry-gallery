@@ -1,9 +1,11 @@
 import { useRef, useState } from "react";
+import Modal from "../modal/Modal";
 
 export default function BottomMenu(props) {
   const hiddenFileInput = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
   const { path, setPath, parent, setLoading, setFiletree } = props;
+  const [newFolderModal, setNewFolderModal] = useState(false);
 
   const chooseFilesHandle = (e) => {
     e.preventDefault();
@@ -45,6 +47,29 @@ export default function BottomMenu(props) {
     }
   };
 
+  const createFolder = (folderName) => {
+    if (!folderName) return;
+    
+    const folderPath = `${path}${folderName}`;
+
+    fetch(`/api/filesystem/`, {
+      method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ path: folderPath }),
+    })
+    .then((response) => response.json())
+    .then((response) => {
+      console.log(response);
+      setNewFolderModal(!newFolderModal);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  };
+
   function returnBack() {
     if (!(path === "")) {
       setFiletree([]);
@@ -54,33 +79,55 @@ export default function BottomMenu(props) {
 
   return (
     <>
-      <button
-        className="button-83 "
-        onClick={() => returnBack()}
-      >
-        Return
-      </button>
-      <form
-        onSubmit={fileUploadHandler}
-        method="post"
-        encType="multipart/form-data"
-      >
-        <input
-          style={{ display: "none" }}
-          multiple
-          type="file"
-          id="files"
-          onChange={fileSelectedHandler}
-          ref={hiddenFileInput}
+      {newFolderModal ? (
+        <Modal
+          type="text-input"
+          method={createFolder}
+          closeModal={setNewFolderModal}
         />
-        <button className="button-83" style={{ marginRight: 10 }} onClick={chooseFilesHandle}>
-          Select files
+      ) : (
+        ""
+      )}
+      <div className="dir-control">
+        <button className="button-83 " onClick={() => returnBack()}>
+          Return
         </button>
-        <button className="button-83" type="submit">
-          Upload files
+        <button
+          className="button-83"
+          style={{ marginRight: 10 }}
+          onClick={() => setNewFolderModal(!newFolderModal)}
+        >
+          Create Folder
         </button>
-      </form>
-      <div className="selected-files-count">Files to upload: {selectedFiles.length}</div>
-  </>
+      </div>
+
+      <div className="upload-control">
+        <form
+          onSubmit={fileUploadHandler}
+          method="post"
+          encType="multipart/form-data"
+        >
+          <input
+            style={{ display: "none" }}
+            multiple
+            type="file"
+            id="files"
+            onChange={fileSelectedHandler}
+            ref={hiddenFileInput}
+          />
+          <button
+            className="button-83"
+            style={{ marginRight: 10 }}
+            onClick={chooseFilesHandle}
+          >
+            Select files
+          </button>
+          Files to upload: {selectedFiles.length} &nbsp;
+          <button className="button-83" type="submit">
+            Upload files
+          </button>
+        </form>
+      </div>
+    </>
   );
 }

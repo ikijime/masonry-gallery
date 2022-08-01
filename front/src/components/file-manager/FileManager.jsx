@@ -40,8 +40,9 @@ export default function Filemanager() {
       .catch(console.error);
   }
 
-  function removeFileHandle(itemToRemove) {
-    fetch(`/api/files/${itemToRemove}`, {
+  function removeFile(id) {
+    console.log(id)
+    fetch(`/api/files/${id}`, {
       method: "DELETE",
     })
       .then(() => {
@@ -51,6 +52,19 @@ export default function Filemanager() {
         console.error(err);
       });
   };
+
+  function changeVisibility(id) {
+    fetch(`/api/files/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ visibility: 0 }),
+    })
+    .then(() => {
+      forceUpdate(1);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+  }
 
   function checkAuth() {
     fetch("/api/auth")
@@ -95,10 +109,10 @@ export default function Filemanager() {
   }
 
   function RenderTree(props) {
-    const { files, path, setPath, removeFileHandle } = props;
-    // console.log('rendering')
+    const { files, path, setPath, removeFile } = props;
+    
     return files.map((item, idx) => {
-      if (item.dir) {
+      if (item.directory) {
         if (item.name === 'thumbnails') return;
         return (
           <div className="folders-container">
@@ -108,7 +122,7 @@ export default function Filemanager() {
               path={path}
               setPath={setPath}
               setFiletree={setFiletree}
-              removeFileHandle={removeFileHandle}
+              removeFile={removeFile}
               key={idx}
             />
           </div>
@@ -118,7 +132,8 @@ export default function Filemanager() {
           <File
             file={item}
             path={path}
-            removeFileHandle={removeFileHandle}
+            removeFile={removeFile}
+            changeVisibility={changeVisibility}
             key={idx}
           />
         );
@@ -148,7 +163,7 @@ export default function Filemanager() {
             files={filetree.files}
             path={path}
             setPath={setPath}
-            removeFileHandle={removeFileHandle}
+            removeFile={removeFile}
           />
         )}
       </div>
@@ -158,13 +173,13 @@ export default function Filemanager() {
           setPath={setPath}
           parent={parent}
           forceUpdate={forceUpdate}
-          removeFileHandle={removeFileHandle}
+          removeFile={removeFile}
           setLoading={setLoading}
           setFiletree={setFiletree}
         />
-        <Link to="/" className="button-83 gray" onClick={() => logout()}>
+      <Link to="/" className="button-83 gray" onClick={() => logout()}>
           Logout
-        </Link>
+      </Link>
       </div>
     </div>
   );

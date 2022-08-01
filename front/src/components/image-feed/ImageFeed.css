@@ -6,6 +6,7 @@ body {
 
 .slider {
   position: fixed;
+  top: 0;
   width: 100%;
   margin: auto;
   transition: background 250ms ease;
@@ -17,7 +18,7 @@ body {
 }
 
 .slider-img {
-  position: absolute;
+  position: fixed;
   margin: 0;
   top: 50%;
   left: 50%;
@@ -32,6 +33,7 @@ body {
 }
 
 .prev {
+  top: 0;
   position: fixed;
   text-align: center;
   line-height: 200px;
@@ -40,6 +42,7 @@ body {
 }
 
 .next {
+  top: 0;
   position: fixed;
   right: 0;
   text-align: center;
@@ -69,9 +72,24 @@ body {
   padding-bottom: 10px;
 }
 
-.feed-loader {
-  min-height: 30px;
+.contacts {
+  display: flex;
+  justify-content: center;
   margin: auto;
+  max-width: 1600px;
+  height: 30px;
+}
+
+.contacts img{
+  color: white;
+  width: 30px;
+  height: 30px;
+}
+
+.feed-loader {
+  display: flex;
+  width: 100vh;
+  min-height: 30px;
 }
 
 .filemanager-link {

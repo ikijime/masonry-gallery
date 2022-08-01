@@ -5,6 +5,7 @@ CREATE TABLE images (
   description text,
   size INTEGER,
   visible BOOLEAN NOT NULL CHECK (visible IN (0, 1)),
+  directory BOOLEAN NOT NULL CHECK (visible IN (0, 1)),
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
 );
 

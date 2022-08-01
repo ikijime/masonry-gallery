@@ -2,31 +2,24 @@ body {
   font-size: 18px;
 }
 
-.item-container-link {
-  margin-top: 5px;
-  margin-left: 5px;
-}
-
-.remove-button {
-  margin-left: 10px;
-  cursor: pointer;
-  color: rgb(214, 65, 65);
-  opacity: 50%;
-  text-decoration: overline;
-}
-
-.remove-button:hover {
-  opacity: 100%;
-  text-decoration: overline;
-}
-
 .bottom-menu-container {
   display: flex;
   gap: 10px;
-  flex-wrap: wrap;
+  flex-direction: column;
   justify-content: center;
+  align-items: center;
   margin-top: 20px;
   margin-bottom: 30px;
+}
+
+.bottom-menu-container .dir-control {
+  display: flex; 
+  gap: 10px;
+}
+
+.bottom-menu-container .upload-control {
+  display: flex; 
+  gap: 10px;
 }
 
 .filemanager-menu {
@@ -42,6 +35,7 @@ body {
 
 .filemanager-tree {
   display: grid;
+  margin: 5px;
   grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
 }
 
@@ -60,12 +54,12 @@ body {
   display: grid;
   grid-template-areas: "item-container-main" "item-container-bottom";
   background-color: rgba(22, 22, 22, 0.2);
-  margin: 5px;
+  justify-content: center;
 }
 
 .item-container:nth-child(odd) {
   background-color: rgba(22, 22, 22, 0.5);
-  margin-bottom: 5px;
+  border-radius: 20%;
 }
 
 .item-container-main {
@@ -75,10 +69,40 @@ body {
 
 .item-container-bottom {
   grid-area: item-container-bottom;
-  align-self: end;
-  justify-items: end;
+  border-radius: 20%;
+  max-width: 100px;
+  max-height: 24px;
+  background-color: rgb(36, 34, 35);
+}
+
+.visibility-button {
+  margin-left: 10px;
+  cursor: pointer;
+  opacity: 80%;
+  text-decoration: overline;
+}
+
+.visibility-button:hover {
+  opacity: 100%;
+  text-decoration: overline;
+}
+
+.remove-button {
+  margin-left: 10px;
+  cursor: pointer;
+  color: rgb(214, 65, 65);
+  opacity: 50%;
+  text-decoration: overline;
+}
+
+.remove-button:hover {
+  opacity: 100%;
+  text-decoration: overline;
+}
+
+.item-link {
   margin-top: 5px;
-  background-color: rgba(30, 30, 30, 1);
+  margin-left: 5px;
 }
 
 .filemager-path {
