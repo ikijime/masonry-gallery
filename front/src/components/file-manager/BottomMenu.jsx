@@ -4,7 +4,7 @@ import Modal from "../modal/Modal";
 export default function BottomMenu(props) {
   const hiddenFileInput = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const { path, setPath, parent, setLoading, setFiletree } = props;
+  const { path, setPath, parent, setLoading, setFiletree, forceUpdate } = props;
   const [newFolderModal, setNewFolderModal] = useState(false);
 
   const chooseFilesHandle = (e) => {
@@ -47,23 +47,21 @@ export default function BottomMenu(props) {
     }
   };
 
-  const createFolder = (folderName) => {
-    if (!folderName) return;
+  const createFolder = (name) => {
+    if (!name) return;
     
-    const folderPath = `${path}${folderName}`;
-
     fetch(`/api/filesystem/`, {
       method: "POST",
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ path: folderPath }),
+      body: JSON.stringify({ path: path, name: name }),
     })
-    .then((response) => response.json())
-    .then((response) => {
-      console.log(response);
+    .then(() => {
+      forceUpdate();
       setNewFolderModal(!newFolderModal);
+      
     })
     .catch((err) => {
       console.error(err);

@@ -1,7 +1,7 @@
 CREATE TABLE images (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   name text NOT NULL,
-  filepath text NOT NULL,
+  path text NOT NULL,
   description text,
   size INTEGER,
   visible BOOLEAN NOT NULL CHECK (visible IN (0, 1)),

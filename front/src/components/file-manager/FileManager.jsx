@@ -25,23 +25,21 @@ export default function Filemanager() {
   useEffect(() => {
     checkAuth();
     setLoading(true);
+    const getFileTree = () => {
+      fetch(`/api/filesystem/?path=${path}`)
+        .then((response) => response.json())
+        .then((response) => {
+          const parentLink = path.split("/").slice(0, -1).join("/");
+          setParent(parentLink);
+          setFiletree(response);
+          setLoading(false);
+        })
+        .catch(console.error);
+    };
     getFileTree();
   }, [path, ignored]);
 
-  function getFileTree() {
-    fetch(`/api/filesystem/?path=${path}`)
-      .then((response) => response.json())
-      .then((response) => {
-        const parentLink = path.split("/").slice(0, -1).join("/");
-        setParent(parentLink);
-        setFiletree(response);
-        setLoading(false);
-      })
-      .catch(console.error);
-  }
-
   function removeFile(id) {
-    console.log(id)
     fetch(`/api/files/${id}`, {
       method: "DELETE",
     })
@@ -51,19 +49,19 @@ export default function Filemanager() {
       .catch((err) => {
         console.error(err);
       });
-  };
+  }
 
   function changeVisibility(id) {
     fetch(`/api/files/${id}`, {
       method: "PATCH",
       body: JSON.stringify({ visibility: 0 }),
     })
-    .then(() => {
-      forceUpdate(1);
-    })
-    .catch((err) => {
-      console.error(err);
-    });
+      .then(() => {
+        forceUpdate(1);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
 
   function checkAuth() {
@@ -75,7 +73,7 @@ export default function Filemanager() {
       .catch((error) => console.error(error));
   }
 
-  function login(e, password, username = 'admin') {
+  function login(e, password, username = "admin") {
     e.preventDefault();
     if (password.length > 7) {
       fetch("/api/signin", {
@@ -110,12 +108,12 @@ export default function Filemanager() {
 
   function RenderTree(props) {
     const { files, path, setPath, removeFile } = props;
-    
+
     return files.map((item, idx) => {
       if (item.directory) {
-        if (item.name === 'thumbnails') return;
+        if (item.name === "thumbnails") return "";
         return (
-          <div className="folders-container">
+          <div className="folders-container" key={idx}>
             <Folder
               props={props}
               folder={item}
@@ -124,6 +122,7 @@ export default function Filemanager() {
               setFiletree={setFiletree}
               removeFile={removeFile}
               key={idx}
+              forceUpdate={forceUpdate}
             />
           </div>
         );
@@ -177,9 +176,9 @@ export default function Filemanager() {
           setLoading={setLoading}
           setFiletree={setFiletree}
         />
-      <Link to="/" className="button-83 gray" onClick={() => logout()}>
+        <Link to="/" className="button-83 gray" onClick={() => logout()}>
           Logout
-      </Link>
+        </Link>
       </div>
     </div>
   );

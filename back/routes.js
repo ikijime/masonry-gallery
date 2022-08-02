@@ -1,9 +1,9 @@
-const fs = require("fs");
-const sharp = require("sharp");
-const db = require("better-sqlite3")("./db/images.db");
-const fileMiddleware = require("./multer");
+const fs = require('fs');
+const sharp = require('sharp');
+const db = require('better-sqlite3')('./db/images.db');
+const fileMiddleware = require('./multer');
 
-function checkImageFolderExists(folderPath = "") {
+function createThumbnailsFolders(folderPath = '') {
   if (!fs.existsSync(`${process.env.STATIC_FILES}/${folderPath}`)) {
     fs.mkdirSync(`${process.env.STATIC_FILES}/${folderPath}`);
   }
@@ -14,14 +14,14 @@ function checkImageFolderExists(folderPath = "") {
 
   if (
     !fs.existsSync(
-      `${process.env.STATIC_FILES}/${folderPath}/thumbnails/small/`
+      `${process.env.STATIC_FILES}/${folderPath}/thumbnails/small/`,
     )
   ) {
     fs.mkdirSync(`${process.env.STATIC_FILES}/${folderPath}/thumbnails/small/`);
   }
 }
 
-function processImages(images, fileFolderPath = "") {
+function processImages(images, fileFolderPath = '') {
   const len = images.length;
   for (let i = 0; i < len; i += 1) {
     const image = images[i];
@@ -35,24 +35,23 @@ function processImages(images, fileFolderPath = "") {
         `${process.env.STATIC_FILES}/${fileFolderPath}/${image.filename}`,
         (err) => {
           if (err) throw err;
-          console.log("Successfully moved.");
-        }
+        },
       );
       image.path = `${process.env.STATIC_FILES}/${fileFolderPath}/${image.filename}`;
     }
 
     const stmt = db.prepare(
-      "INSERT INTO images (name, filepath, description, size, visible, directory) VALUES (?, ?, ?, ?, ?, ?)"
+      'INSERT INTO images (name, path, description, size, visible, directory) VALUES (?, ?, ?, ?, ?, ?)',
     );
 
-    checkImageFolderExists(fileFolderPath);
+    createThumbnailsFolders(fileFolderPath);
 
-    stmt.run(image.filename, fileFolderPath, "", image.size, 1, 0);
+    stmt.run(image.filename, fileFolderPath, '', image.size, 1, 0);
     // 600px for preview
     sharp(image.path)
       .resize({
         width: 500,
-        fit: "outside",
+        fit: 'outside',
       })
       .withMetadata()
       .toFile(`${imageFolder}/thumbnails/${image.filename}`, (err) => {
@@ -64,7 +63,7 @@ function processImages(images, fileFolderPath = "") {
     sharp(image.path)
       .resize({
         width: 100,
-        fit: "outside",
+        fit: 'outside',
       })
       .withMetadata()
       .toFile(`${imageFolder}/thumbnails/small/${image.filename}`, (err) => {
@@ -84,27 +83,27 @@ function saveFiles(req, res) {
   const { fileFolderPath } = req.body;
 
   if (req.files === undefined || req.files.length === 0) {
-    res.json({ error: "No files provided" });
+    res.json({ error: 'No files provided' });
     return;
   }
 
   processImages(req.files, fileFolderPath);
   res.send({
     status: true,
-    message: "Files is uploaded",
+    message: 'Files is uploaded',
   });
 }
 
-function deleteFile(filename, folderPath = "") {
+function deleteFile(filename, folderPath = '') {
   const staticPath = `${process.env.STATIC_FILES}/${folderPath}`;
-  const stmt = db.prepare("DELETE FROM images WHERE name = ?");
-  const filePath = `${staticPath}/${filename}`;
-  const thumbnailsFilepath = `${staticPath}/thumbnails/${filename}`;
-  const smallThumbnailsFilePath = `${staticPath}/thumbnails/small/${filename}`;
-  const filePaths = [filePath, thumbnailsFilepath, smallThumbnailsFilePath];
+  const stmt = db.prepare('DELETE FROM images WHERE name = ?');
+  const path = `${staticPath}/${filename}`;
+  const thumbnailsfullpath = `${staticPath}/thumbnails/${filename}`;
+  const smallThumbnailsfullpath = `${staticPath}/thumbnails/small/${filename}`;
+  const fullpaths = [path, thumbnailsfullpath, smallThumbnailsfullpath];
 
-  filePaths.forEach((path) => {
-    if (fs.existsSync(path)) {
+  fullpaths.forEach((filePath) => {
+    if (fs.existsSync(filePath)) {
       fs.unlink(path, (err) => {
         if (err) throw err;
       });
@@ -119,81 +118,87 @@ module.exports = (app) => {
     return fs.existsSync(path) && fs.lstatSync(path).isDirectory();
   }
 
-  // app.get('/api/filesystem/', (req, res) => {
-  //   const staticPath = process.env.STATIC_FILES;
-  //   const path = req.query.path ? req.query.path : '';
-
-  //   if (isDirectory(`${staticPath}/${path}`)) {
-  //     const files = fs.readdirSync(`${staticPath}/${path}`).map((item) => {
-  //       const fullPath = `${staticPath}/${path}/${item}`;
-  //       const isDir = fs.lstatSync(fullPath).isDirectory();
-  //       let size = 0;
-  //       if (!isDir) size = fs.lstatSync(fullPath);
-
-  //       return {
-  //         name: item,
-  //         dir: isDir,
-  //         size: size.size ?? 0,
-  //       };
-  //     });
-  //     res.json({
-  //       files,
-  //     });
-  //   } else {
-  //     res.json({ error: 'empty' });
-  //   }
-  // });
-
-  app.get("/api/filesystem/", (req, res) => {
-    const path = req.query.path ? req.query.path : "";
-    const stmt = db.prepare("SELECT * FROM images WHERE filepath = ?");
+  app.get('/api/filesystem/', (req, res) => {
+    const path = req.query.path ? req.query.path : '';
+    const stmt = db.prepare('SELECT * FROM images WHERE path = ?');
     const imagesFromDb = stmt.all(path);
     res.json({ files: imagesFromDb });
   });
 
-  app.post("/api/filesystem/", (req, res) => {
+  app.post('/api/filesystem/', (req, res) => {
     if (!req.session.auth) {
       res.send(401);
       return;
     }
 
-    const path = req.body.path ? req.body.path : "";
-    if (!isDirectory(`${process.env.STATIC_FILES}/${path}`)) {
-      fs.mkdirSync(`${process.env.STATIC_FILES}/${path}`);
+    const name = req.body.name ? req.body.name : '';
+    const path = req.body.path ? req.body.path : '';
+    if (!isDirectory(`${process.env.STATIC_FILES}/${path}/${name}`)) {
+      fs.mkdirSync(`${process.env.STATIC_FILES}/${path}/${name}`);
       const stmt = db.prepare(
-        "INSERT INTO images (name, filepath, description, size, visible, directory) VALUES (?, ?, ?, ?, ?, ?)"
+        'INSERT INTO images (name, path, description, size, visible, directory) VALUES (?, ?, ?, ?, ?, ?)',
       );
-      stmt.run(path, "", "", 0, 1, 1);
+      stmt.run(name, path, '', 0, 1, 1);
+      res.send(200);
     } else {
-      res.json({ error: 'folder already exists'});
+      res.json({ error: 'folder already exists' });
     }
-  });
-
-  app.get("/api/files/:page", (req, res) => {
-    const images = getFiles(req.params.page);
-    res.json({ images });
   });
 
   function getFiles(page = 1) {
     const offset = (page - 1) * 4;
-    const stms = db.prepare("SELECT * FROM images WHERE directory = false LIMIT ?, ? ");
+    const stms = db.prepare('SELECT * FROM images WHERE directory = false LIMIT ?, ? ');
     const queryResult = stms.all(offset, 4);
     return queryResult;
   }
-  
-  app.patch("/api/files/:id", (req, res) => {
+
+  app.get('/api/files/:page', (req, res) => {
+    const images = getFiles(req.params.page);
+    res.json({ images });
+  });
+
+  app.patch('/api/files/:id', (req, res) => {
     const stmt = db.prepare(
-      "UPDATE images SET visible = NOT visible WHERE id = ?"
+      'UPDATE images SET visible = NOT visible WHERE id = ?',
     );
     stmt.run(req.params.id);
 
-    // stmt.run(image.filename, fileFolderPath, '', image.size, 1);
     res.json(req.params.id);
   });
 
-  app.post("/api/files", fileMiddleware.array("photos"), saveFiles);
+  app.post('/api/files', fileMiddleware.array('photos'), saveFiles);
 
-  app.delete("/api/files/(*/)?:filename*", (req, res) => {
+  app.post('/api/filesystem/delete', (req, res) => {
+    if (!req.session.auth) {
+      res.send(401);
+      return;
+    }
+
+    const name = req.body.name ? req.body.name : '';
+    const path = req.body.path ? req.body.path : '';
+    const fullPath = `${path}${name}`;
+
+    const stmt = db.prepare(
+      'DELETE FROM images WHERE path = ?',
+    );
+    stmt.run(name);
+
+    const stmt2 = db.prepare(
+      'DELETE FROM images WHERE path = ? AND name = ?',
+    );
+    stmt2.run(path, name);
+
+    fs.rm(`${process.env.STATIC_FILES}/${fullPath}`, { recursive: true }, (err) => {
+      if (err) {
+        // File deletion failed
+        console.error(err.message);
+        return;
+      }
+      res.send(200);
+    });
+  });
+
+  app.delete('/api/files/(*/)?:filename*', (req, res) => {
     if (!req.session.auth) {
       res.send(401);
       return;
@@ -206,7 +211,7 @@ module.exports = (app) => {
       deleteFile(filename, folderPath);
       res.status(200).send({});
     } else {
-      res.status(400).send("Please specify a filename");
+      res.status(400).send('Please specify a filename');
     }
   });
 };

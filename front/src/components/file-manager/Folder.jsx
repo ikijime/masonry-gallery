@@ -1,5 +1,5 @@
 export default function Folder(props) {
-  const { folder, path, setPath, setFiletree } = props;
+  const { folder, path, setPath, setFiletree, forceUpdate } = props;
 
   const getDirectoryContentHandle = (e) => {
     e.preventDefault();
@@ -7,9 +7,22 @@ export default function Folder(props) {
     setPath(e.target.attributes.href.value);
   };
 
-  const removeFolderHandle = (path) => {
-    console.log(path);
-    
+  const removeFolderHandle = (path, name) => {
+
+    fetch(`/api/filesystem/delete`, {
+      method: "POST",
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ path: path, name: name }),
+    })
+    .then(() => {
+      forceUpdate();
+    })
+    .catch((err) => {
+      console.error(err);
+    });
   };
 
   const newPath = path === "" ? path : path + "/";
@@ -45,7 +58,7 @@ export default function Folder(props) {
         </span>
         <span
           className="remove-button"
-          onClick={() => removeFolderHandle(`${newPath}${folder.name}`)}
+          onClick={() => removeFolderHandle(path, folder.name)}
         >
           <svg
             viewBox="64 64 896 896"

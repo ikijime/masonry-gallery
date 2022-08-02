@@ -1,11 +1,11 @@
 export default function File(props) {
-  const staticsUrl = "./static/files";
+  let staticsUrl = "./static/files";
   if (process.env.STATIC_FILES) {
     staticsUrl = process.env.STATIC_FILES;
   }
 
   const file = props.file;
-  const smallThumb = `${staticsUrl}/${props.path}/thumbnails/small/${file.name}`;
+  const smallThumb = `${staticsUrl}/${file.path}/thumbnails/small/${file.name}`;
   const newPath = props.path ? `${props.path}/` : "";
 
   const visibilityButton = () => {

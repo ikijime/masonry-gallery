@@ -11,7 +11,6 @@ export default function Imagefeed() {
   const [auth, setAuth] = useState(false);
   const [sliderToogle, setSliderToogle] = useState(false);
   const [imgIndex, setImgIndex] = useState(0);
-  const [touchStartX, setTouchStartX] = useState(0);
   const [touchStartY, setTouchStartY] = useState(0);
   const staticAddr = `./static/files`;
 
@@ -89,24 +88,18 @@ export default function Imagefeed() {
 
     if (e.keyCode === 40) {
       document.exitFullscreen();
-      //window.open(`${staticAddr}/${images[imgIndex].filepath}/${images[imgIndex].name}`)
     }
-    
+
     if (e.keyCode === 27) setSliderToogle(!sliderToogle);
-    // if (e.keyCode === 39) next();
-    // if (e.keyCode === 37) prev();
   }
 
   function handleTouchStart(e) {
-    setTouchStartX(e.targetTouches[0].pageX);
     setTouchStartY(e.targetTouches[0].pageY);
   }
 
   function handleTouchEnd(e) {
-    let touchEndX = e.changedTouches[0].pageX;
     let touchEndY = e.changedTouches[0].pageY;
 
-    // let deltaX = touchStartX - touchEndX;
     let deltaY = touchEndY - touchStartY;
 
     if (deltaY > 100) {
@@ -118,14 +111,6 @@ export default function Imagefeed() {
     if (deltaY < -120 && !document.fullscreenElement) {
       document.documentElement.requestFullscreen();
     }
-
-    // if (deltaX > 120) {
-    //   prev();
-    // }
-
-    // if (deltaX < -120) {
-    //   next();
-    // }
   }
 
   if (sliderToogle) {
@@ -137,12 +122,14 @@ export default function Imagefeed() {
   return (
     <>
       {sliderToogle && (
-        <>                      <div
-        style={{ zIndex: "11" }}
-        className="prev"
-        onClick={prev}
-        tabIndex="39"
-      ></div>
+        <>
+          {" "}
+          <div
+            style={{ zIndex: "11" }}
+            className="prev"
+            onClick={prev}
+            tabIndex="39"
+          ></div>
           <div
             className="slider"
             onClick={() => {
@@ -151,31 +138,25 @@ export default function Imagefeed() {
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
-
             <Slider
               onSlideComplete={(i) => {
-                console.log(i);
                 setImgIndex(i);
-                // console.log('finished dragging, current slide is', i)
               }}
-              onSlideStart={(i) => {
-                // console.log('started dragging on slide', i)
-              }}
+              onSlideStart={(i) => {}}
               activeIndex={imgIndex}
               threshHold={100}
               transition={0.3}
               scaleOnDrag={false}
             >
               {images.map((image, index) => (
-                  <img 
-                  src={`${staticAddr}${image.filepath}/${image.name}`}
+                <img
+                  src={`${staticAddr}/${image.path}/${image.name}`}
                   key={index}
                   loading="lazy"
+                  alt={image.name}
                 />
-                )
-            )}
+              ))}
             </Slider>
-            
           </div>
           <div style={{ zIndex: "11" }} className="next" onClick={next}></div>
         </>
@@ -186,15 +167,15 @@ export default function Imagefeed() {
         tabIndex="0"
         onKeyDown={handleKeyboard}
       >
-        {auth == true && (
+        {auth === true && (
           <Link to="/filemanager" className="upper-menu">
             <div className="filemanager-link">filemanager</div>
           </Link>
         )}
         {images.map((image, index) => {
-          let imagepath = !image.filepath ? "" : `/${image.filepath}`;
-          
-          if (!image.visible) return;
+          let imagepath = !image.path ? "" : `/${image.path}`;
+
+          if (!image.visible) return "";
 
           return (
             <div
@@ -209,6 +190,7 @@ export default function Imagefeed() {
                 fullimagelink={`${staticAddr}${imagepath}/${image.name}`}
                 onClick={(e) => handlerImgClick(e, images.indexOf(image))}
                 loading="lazy"
+                alt={image.name}
               />
             </div>
           );
@@ -216,9 +198,9 @@ export default function Imagefeed() {
 
         {loading && <div className="feed-loader">Loading...</div>}
       </div>
-      
+
       <div className="contacts">
-        <span style={{fontSize: 16}}>email:&nbsp;</span>
+        <span style={{ fontSize: 16 }}>email:&nbsp;</span>
         <a href="mailto:test@localhost.lan">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -232,8 +214,8 @@ export default function Imagefeed() {
           </svg>
         </a>
         <span>&nbsp;&nbsp;&nbsp;</span>
-        <span style={{fontSize: 16}}>telegram</span>: &nbsp;
-        <a href="tg://resolve?domain=satori101">
+        <span style={{ fontSize: 16 }}>telegram</span>: &nbsp;
+        <a href="tg://resolve?domain=#">
           <svg
             width="24px"
             height="24px"

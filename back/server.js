@@ -8,7 +8,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const { v4: uuidv4 } = require('uuid');
 
-/////////// SESSIONS ////////////
+/// //////// SESSIONS ////////////
 const session = require('express-session');
 const KnexSessionStore = require('connect-session-knex')(session);
 
