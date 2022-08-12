@@ -1,11 +1,17 @@
 import { useRef, useState } from "react";
 import Modal from "../modal/Modal";
+import { setCurrentPath, setFileTree } from '../../reducers/fileSystemSlice';
+import { useSelector, useDispatch } from 'react-redux';
 
 export default function BottomMenu(props) {
   const hiddenFileInput = useRef(null);
   const [selectedFiles, setSelectedFiles] = useState([]);
-  const { path, setPath, parent, setLoading, setFiletree, forceUpdate } = props;
+  const { setLoading, forceUpdate } = props;
   const [newFolderModal, setNewFolderModal] = useState(false);
+
+  const dispatch = useDispatch();
+  const path = useSelector(state => state.fileSystem.currentPath);
+  const parent = useSelector(state => state.fileSystem.parrentPath);
 
   const chooseFilesHandle = (e) => {
     e.preventDefault();
@@ -70,9 +76,9 @@ export default function BottomMenu(props) {
 
   function returnBack() {
     if (!(path === "")) {
-      setFiletree([]);
+      dispatch(setFileTree([]));
     }
-    setPath(parent);
+    dispatch(setCurrentPath(parent));
   }
 
   return (

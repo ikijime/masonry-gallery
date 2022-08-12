@@ -1,12 +1,15 @@
+import { useSelector } from 'react-redux';
+
 export default function File(props) {
   let staticsUrl = "./static/files";
   if (process.env.STATIC_FILES) {
     staticsUrl = process.env.STATIC_FILES;
   }
 
+  const path = useSelector(state => state.fileSystem.currentPath);
   const file = props.file;
   const smallThumb = `${staticsUrl}/${file.path}/thumbnails/small/${file.name}`;
-  const newPath = props.path ? `${props.path}/` : "";
+  const newPath = path ? `${path}/` : "";
 
   const visibilityButton = () => {
     if (!file.visible) {
@@ -73,7 +76,7 @@ export default function File(props) {
 
         <span
           className="remove-button"
-          onClick={() => props.removeFile(`${newPath}${file.name}`)}
+          onClick={() => props.remove(`${newPath}${file.name}`)}
         >
           <svg
             viewBox="64 64 896 896"

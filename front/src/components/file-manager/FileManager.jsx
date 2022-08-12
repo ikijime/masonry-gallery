@@ -7,14 +7,15 @@ import BottomMenu from "./BottomMenu";
 import Spinner from "../spinner/Spinner";
 import Login from "../login/Login";
 
+import { useSelector, useDispatch } from 'react-redux';
+import { setParentPath, setFileTree, removeFromFileTree, changeVisibilityInFileTree } from '../../reducers/fileSystemSlice';
+
 export default function Filemanager() {
+  const dispatch = useDispatch();
+  const path = useSelector(state => state.fileSystem.currentPath);
+  const fileTree = useSelector(state => state.fileSystem.fileTree);
   const [showLoginPage, setshowLoginPage] = useState(true);
   const [ignored, forceUpdate] = useReducer((x) => x + 1, 0);
-  const [parent, setParent] = useState("/");
-  const [path, setPath] = useState("");
-  const [filetree, setFiletree] = useState({
-    files: [],
-  });
   const [auth, setAuth] = useState(false);
   const [loginErrors, setLoginErrors] = useState({
     loginError: false,
@@ -22,42 +23,54 @@ export default function Filemanager() {
   });
   const [loading, setLoading] = useState(true);
 
+  // store.subscribe(remove);
+  const getFileTree = () => {
+    fetch(`/api/filesystem/?path=${path}`)
+      .then((response) => response.json())
+      .then((response) => {
+        const parentLink = path.split("/").slice(0, -1).join("/");
+        dispatch(setParentPath(parentLink));
+        dispatch(setFileTree(response.files));
+        setLoading(false);
+      })
+      .catch(console.error);
+  };
+  
   useEffect(() => {
+    console.log('useEffect fired')
     checkAuth();
     setLoading(true);
-    const getFileTree = () => {
-      fetch(`/api/filesystem/?path=${path}`)
-        .then((response) => response.json())
-        .then((response) => {
-          const parentLink = path.split("/").slice(0, -1).join("/");
-          setParent(parentLink);
-          setFiletree(response);
-          setLoading(false);
-        })
-        .catch(console.error);
-    };
     getFileTree();
   }, [path, ignored]);
 
-  function removeFile(id) {
+  function remove(id) {
     fetch(`/api/files/${id}`, {
       method: "DELETE",
     })
       .then(() => {
-        forceUpdate(1);
+        console.log('removed');
+        console.log(id);
+        dispatch(removeFromFileTree(id));
       })
       .catch((err) => {
         console.error(err);
       });
   }
 
-  function changeVisibility(id) {
+  function changeVisibility(id, folderName = false) {
     fetch(`/api/files/${id}`, {
       method: "PATCH",
-      body: JSON.stringify({ visibility: 0 }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ 
+        folderName: folderName
+      }),
     })
       .then(() => {
-        forceUpdate(1);
+        dispatch(changeVisibilityInFileTree(id));
+        if (folderName) getFileTree();
       })
       .catch((err) => {
         console.error(err);
@@ -106,10 +119,8 @@ export default function Filemanager() {
     });
   }
 
-  function RenderTree(props) {
-    const { files, path, setPath, removeFile } = props;
-
-    return files.map((item, idx) => {
+  const RenderTree = (props) => {
+    return fileTree.map((item, idx) => {
       if (item.directory) {
         if (item.name === "thumbnails") return "";
         return (
@@ -117,12 +128,9 @@ export default function Filemanager() {
             <Folder
               props={props}
               folder={item}
-              path={path}
-              setPath={setPath}
-              setFiletree={setFiletree}
-              removeFile={removeFile}
-              key={idx}
               forceUpdate={forceUpdate}
+              changeVisibility={changeVisibility}
+              key={idx}
             />
           </div>
         );
@@ -130,8 +138,7 @@ export default function Filemanager() {
         return (
           <File
             file={item}
-            path={path}
-            removeFile={removeFile}
+            remove={remove}
             changeVisibility={changeVisibility}
             key={idx}
           />
@@ -153,33 +160,27 @@ export default function Filemanager() {
 
   return (
     <div className="filemanager-container">
+
       {loading ? <Spinner active /> : ""}
+
       <Link to="/">Image feed</Link>
+
       <span className="filemager-path">/{path}</span>
+
       <div className="filemanager-tree">
-        {filetree.files && (
-          <RenderTree
-            files={filetree.files}
-            path={path}
-            setPath={setPath}
-            removeFile={removeFile}
-          />
-        )}
+        <RenderTree />
       </div>
+
       <div className="bottom-menu-container">
         <BottomMenu
-          path={path}
-          setPath={setPath}
-          parent={parent}
           forceUpdate={forceUpdate}
-          removeFile={removeFile}
           setLoading={setLoading}
-          setFiletree={setFiletree}
         />
         <Link to="/" className="button-83 gray" onClick={() => logout()}>
           Logout
         </Link>
       </div>
+
     </div>
   );
 }

@@ -104,7 +104,7 @@ function deleteFile(filename, folderPath = '') {
 
   fullpaths.forEach((filePath) => {
     if (fs.existsSync(filePath)) {
-      fs.unlink(path, (err) => {
+      fs.unlink(filePath, (err) => {
         if (err) throw err;
       });
     }
@@ -157,15 +157,26 @@ module.exports = (app) => {
     res.json({ images });
   });
 
+  // PATH {visibility} //
   app.patch('/api/files/:id', (req, res) => {
-    const stmt = db.prepare(
-      'UPDATE images SET visible = NOT visible WHERE id = ?',
-    );
-    stmt.run(req.params.id);
+    console.log(req.body)
+    if (req.body.folderName) {
+      console.log('here')
+      const stmt = db.prepare(
+        'UPDATE images SET visible = NOT visible WHERE (id = ? OR path = ?)',
+      );
+      stmt.run(req.params.id, req.body.folderName);
+    } else {
+      const stmt = db.prepare(
+        'UPDATE images SET visible = NOT visible WHERE id = ?',
+      );
+      stmt.run(req.params.id);
+    }
 
     res.json(req.params.id);
   });
 
+  // POST {saving files}
   app.post('/api/files', fileMiddleware.array('photos'), saveFiles);
 
   app.post('/api/filesystem/delete', (req, res) => {
