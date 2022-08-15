@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const fs = require('fs');
 const sharp = require('sharp');
 const db = require('better-sqlite3')('./db/images.db');
@@ -104,7 +105,7 @@ function deleteFile(filename, folderPath = '') {
 
   fullpaths.forEach((filePath) => {
     if (fs.existsSync(filePath)) {
-      fs.unlink(path, (err) => {
+      fs.unlink(filePath, (err) => {
         if (err) throw err;
       });
     }
@@ -139,7 +140,7 @@ module.exports = (app) => {
         'INSERT INTO images (name, path, description, size, visible, directory) VALUES (?, ?, ?, ?, ?, ?)',
       );
       stmt.run(name, path, '', 0, 1, 1);
-      res.send(200);
+      res.sendStatus(200);
     } else {
       res.json({ error: 'folder already exists' });
     }
@@ -157,15 +158,29 @@ module.exports = (app) => {
     res.json({ images });
   });
 
+  // PATH {visibility} //
   app.patch('/api/files/:id', (req, res) => {
-    const stmt = db.prepare(
-      'UPDATE images SET visible = NOT visible WHERE id = ?',
-    );
-    stmt.run(req.params.id);
+    if (req.body.folderName) {
+      const stmt = db.prepare(
+        'SELECT visible FROM images WHERE (id = ? AND directory)',
+      );
+      const result = stmt.get(req.params.id);
+      const isDirVisibleFlag = result.visible === 0 ? 1 : 0;
+      const stmt2 = db.prepare(
+        'UPDATE images SET visible = ? WHERE (id = ? OR (path = ? AND NOT directory))',
+      );
+      stmt2.run(isDirVisibleFlag, req.params.id, req.body.folderName);
+    } else {
+      const stmt = db.prepare(
+        'UPDATE images SET visible = NOT visible WHERE id = ?',
+      );
+      stmt.run(req.params.id);
+    }
 
     res.json(req.params.id);
   });
 
+  // POST {saving files}
   app.post('/api/files', fileMiddleware.array('photos'), saveFiles);
 
   app.post('/api/filesystem/delete', (req, res) => {
@@ -190,7 +205,6 @@ module.exports = (app) => {
 
     fs.rm(`${process.env.STATIC_FILES}/${fullPath}`, { recursive: true }, (err) => {
       if (err) {
-        // File deletion failed
         console.error(err.message);
         return;
       }

@@ -2,8 +2,8 @@ setup:
 	npm i
 	mkdir -p ./db
 	mkdir -p ./public/static/files
-	touch images.db
-	sqlite3 /db/images.db ".read 01_migratin.sql"
+	touch ./db/images.db
+	sqlite3 ./db/images.db ".read 01_migratin.sql"
 
 migrate:
 	rm -f ./db/images.db;
@@ -17,3 +17,6 @@ clean:
 
 postLogin:
 	curl -X POST http://localhost:8871/signin -c cookie-file.txt -H 'Content-Type: application/json' -d '{"username":"user1", "password":"password1"}'
+
+lint:
+	./node_modules/.bin/eslint server.js
