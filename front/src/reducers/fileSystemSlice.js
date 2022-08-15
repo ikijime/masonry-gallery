@@ -5,7 +5,7 @@ export const fileSystemSlice = createSlice({
   initialState: {
     currentPath: '',
     parrentPath: '',
-    fileTree: []
+    fileTree: [],
   },
   reducers: {
     setCurrentPath: (state, action) => {
@@ -18,20 +18,28 @@ export const fileSystemSlice = createSlice({
       state.fileTree = action.payload
     },
     removeFromFileTree: (state, action) => {
-      state.fileTree = state.fileTree.filter(item => item.name !== action.payload);
+      state.fileTree = state.fileTree.filter(
+        (item) => item.name !== action.payload
+      )
     },
     changeVisibilityInFileTree: (state, action) => {
-      state.fileTree = state.fileTree.map(item => {
+      state.fileTree = state.fileTree.map((item) => {
         if (item.id === action.payload) {
-          item.visible = !item.visible;
-        };
-        return item;
-      });
-    }
-  }
+          item.visible = !item.visible
+        }
+        return item
+      })
+    },
+  },
 })
 
 // Action creators are generated for each case reducer function
-export const { setCurrentPath, setParentPath, setFileTree, removeFromFileTree, changeVisibilityInFileTree } = fileSystemSlice.actions
+export const {
+  setCurrentPath,
+  setParentPath,
+  setFileTree,
+  removeFromFileTree,
+  changeVisibilityInFileTree,
+} = fileSystemSlice.actions
 
 export default fileSystemSlice.reducer
