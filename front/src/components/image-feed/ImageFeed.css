@@ -11,6 +11,7 @@ body {
 .slider {
   position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
   margin: auto;
   transition: background 250ms ease;
@@ -38,6 +39,7 @@ body {
 
 .prev {
   top: 0;
+  left: 0;
   position: fixed;
   text-align: center;
   line-height: 200px;

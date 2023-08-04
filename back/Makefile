@@ -3,7 +3,7 @@ setup:
 	mkdir -p ./db
 	mkdir -p ./public/static/files
 	touch ./db/images.db
-	sqlite3 ./db/images.db ".read 01_migratin.sql"
+	sqlite3 ./db/images.db ".read ./db/01_migration.sql"
 
 migrate:
 	rm -f ./db/images.db;

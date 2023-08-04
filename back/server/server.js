@@ -31,7 +31,8 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/static', express.static(path.join(__dirname, 'public/static')));
+app.use(express.static('public'))
+
 
 app.use(cookieParser());
 app.use(session({
@@ -55,9 +56,10 @@ app.use(session({
 }));
 
 if (app.get('env') === 'production') {
-  app.set('trust proxy', 1);
+//  app.set('trust proxy', 1);
 }
 
+app.get('/api/hello', () => console.log('test'));
 app.post('/api/signin', signinHandler);
 app.get('/api/auth', authHandler);
 app.get('/api/logout', logoutHandler);
