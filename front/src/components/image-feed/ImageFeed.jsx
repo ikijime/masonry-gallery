@@ -185,7 +185,7 @@ export default function Imagefeed() {
         <span>&nbsp;&nbsp;&nbsp;</span> */}
         <div className='tg-icon'>
         <span style={{ fontSize: '18' }}></span> &nbsp;
-        <a href='tg://resolve?domain=#'>
+        <a href='tg://resolve?domain='>
           <svg className='tg-svg'
             width='24px'
             height='24px'
