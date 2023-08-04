@@ -1,5 +1,4 @@
 import { useSelector } from 'react-redux'
-
 export default function File(props) {
   let staticsUrl = './static/files'
   if (process.env.STATIC_FILES) {
@@ -15,8 +14,8 @@ export default function File(props) {
     if (!file.visible) {
       return (
         <svg
-          width='24'
-          height='20'
+          width='1em'
+          height='1em'
           xmlns='http://www.w3.org/2000/svg'
           fillRule='evenodd'
           clipRule='evenodd'
@@ -52,12 +51,12 @@ export default function File(props) {
               fill='#000000'
               xmlns='http://www.w3.org/2000/svg'
               viewBox='0 0 24 24'
-              width='20px'
-              height='20px'
+              width='1em'
+              height='1em'
             >
               <path
-                fill='#433443'
-                stroke='#695169'
+                fill='#4a4a4a'
+                stroke='#8c8c8c'
                 strokeMiterlimit='10'
                 strokeWidth='1.5'
                 d='M19,20c0,0.551-0.449,1-1,1H6c-0.551,0-1-0.449-1-1V4c0-0.551,0.449-1,1-1h7.586L19,8.414V20z'
@@ -79,11 +78,11 @@ export default function File(props) {
           onClick={() => props.remove(`${newPath}${file.name}`)}
         >
           <svg
-            viewBox='64 64 896 896'
+            viewBox='64 64 900 900'
             focusable='false'
             data-icon='close-circle'
-            width='1em'
-            height='1em'
+            width='0.9em'
+            height='0.9em'
             fill='red'
             aria-hidden='true'
           >

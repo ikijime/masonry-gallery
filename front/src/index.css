@@ -13,7 +13,7 @@
 
 body {
   margin: 0;
-  background-color: var(--xiketic);
+  background-color: var(--outer-space);
   color: var(--grayxgray);
   font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans' ,
@@ -28,7 +28,7 @@ code {
 }
 
 a:link {
-  color: hotpink;
+  color: white;
   text-decoration: none;
 }
 

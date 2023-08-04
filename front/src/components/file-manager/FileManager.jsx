@@ -164,12 +164,13 @@ export default function Filemanager() {
   }
 
   return (
+  <div>
+    <Link to='/'><div className="image-feed-button">ImageFeed</div></Link>
     <div className='filemanager-container'>
       {loading ? <Spinner active /> : ''}
 
-      <Link to='/'>Image feed</Link>
 
-      <span className='filemager-path'>/{path}</span>
+      <span className='filemanager-path'>/{path}</span>
 
       <div className='filemanager-tree'>
         <RenderTree />
@@ -182,5 +183,6 @@ export default function Filemanager() {
         </Link>
       </div>
     </div>
+  </div>
   )
 }

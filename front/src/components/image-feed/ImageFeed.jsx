@@ -2,6 +2,9 @@ import './ImageFeed.css'
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import Slider from '../slider/Slider'
+import Masonry from 'react-smart-masonry';
+
+const breakpoints = { mobile: 0, mobile2: 600, tablet: 900, desktopSmall: 1200, desktop: 1600 };
 
 export default function Imagefeed() {
   const [page, setPage] = useState(1)
@@ -153,6 +156,18 @@ export default function Imagefeed() {
 
   return (
     <>
+      {auth === true && (
+        <div>
+        <Link to='/filemanager' className='upper-menu'>
+          <div 
+            className='filemanager-link'>
+            Filemanager
+          </div>
+        </Link>
+          <div className="spacer"></div>
+        </div>
+      )}
+
       <div
         className='image-feed-container'
         tabIndex='0'
@@ -197,12 +212,13 @@ export default function Imagefeed() {
           </div>
         )}
 
-        {auth === true && (
-          <Link to='/filemanager' className='upper-menu'>
-            <div className='filemanager-link'>filemanager</div>
-          </Link>
-        )}
-        {images.map((image, index) => {
+
+        <Masonry 
+          breakpoints={breakpoints}
+          autoArrange={true}
+          columns={{ mobile: 1, mobile2: 3, tablet: 4, desktopSmall: 6, desktop: 8 }}
+          gap={{ mobile: 5, mobile2: 5, tablet: 10, desktopSmall: 15, desktop: 20 }}
+        >{images.map((image) => {
           let imagepath = !image.path ? '' : `/${image.path}`
 
           if (!image.visible) return ''
@@ -225,6 +241,7 @@ export default function Imagefeed() {
             </div>
           )
         })}
+        </Masonry>
 
         {loading && <div className='feed-loader'>Loading...</div>}
       </div>
@@ -258,7 +275,7 @@ export default function Imagefeed() {
               <linearGradient
                 id='linearGradient-1'
                 x1='50%'
-                x2='50%'
+                x2='70%'
                 y2='99.258%'
               >
                 <stop stopColor='#375669' offset='0' />
