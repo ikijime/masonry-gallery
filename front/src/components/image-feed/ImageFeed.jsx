@@ -270,7 +270,7 @@ export default function Imagefeed() {
 
         <Masonry 
           breakpoints={breakpoints}
-          autoArrange={true}
+          // autoArrange={true}
           columns={{ mobile: 1, mobile2: 3, tablet: 4, desktopSmall: 6, desktop: 8 }}
           gap={{ mobile: 5, mobile2: 5, tablet: 10, desktopSmall: 15, desktop: 20 }}
         >{images.map((image) => {

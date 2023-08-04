@@ -145,10 +145,11 @@ module.exports = (app) => {
       res.json({ error: 'folder already exists' });
     }
   });
-
+  
+// GET ALL VISIBLE IMAGES
   function getFiles(page = 1) {
     const offset = (page - 1) * 4;
-    const stms = db.prepare('SELECT * FROM images WHERE directory = false LIMIT ?, ? ');
+    const stms = db.prepare('SELECT * FROM images WHERE directory = false ORDER BY id DESC LIMIT ?, ? ');
     const queryResult = stms.all(offset, 4);
     return queryResult;
   }

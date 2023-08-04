@@ -123,7 +123,11 @@ body {
 .zoom:hover {
   cursor: pointer;
   box-shadow: 2px 6px 10px 10px rgba(0, 0, 0, 0.6);
-  transform: scale(1.2);
+  transform: scale(1.1);
+}
+
+.image-feed-container {
+  margin: 20px;
 }
 
 .image-feed-container > div {
@@ -148,6 +152,10 @@ body {
 }
 
 @media (max-width: 600px) {
+  .image-feed-container {
+    margin: 5px;
+  }
+
   .zoom:hover {
     cursor: pointer;
     box-shadow: 2px 6px 10px 10px rgba(0, 0, 0, 0.2);
