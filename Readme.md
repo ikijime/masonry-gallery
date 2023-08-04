@@ -9,3 +9,6 @@ Display in masonry style on desktop/horizontal and single columm on mobile/verti
 > * swipe right / key rigth: next image
 
 Admin panel on /filemanager
+
+make /back/Makefile  install and migrate
+(cd /front && npm run build)  to build and copy to frontend to public folder
