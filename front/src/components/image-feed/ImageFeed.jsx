@@ -151,7 +151,7 @@ export default function Imagefeed() {
   if (sliderToogle) {
     document.body.style.overflow = 'hidden'
   } else {
-    document.body.style.overflow = 'scroll'
+    document.body.style.overflow = 'auto'
   }
 
   return (
@@ -256,7 +256,7 @@ export default function Imagefeed() {
                 {images.map((image, index) => (
                   <img
                     src={`${staticAddr}/${image.path}/${image.name}`}
-                    key={index}
+                    key={image.name}
                     loading='lazy'
                     alt={image.name}
                   />
@@ -282,7 +282,7 @@ export default function Imagefeed() {
             <div
               ref={lastElementRef}
               className='image-card-feed'
-              key={image.name.toString()}
+              key={image.name}
             >
               <img
                 className='gallery-item zoom'
