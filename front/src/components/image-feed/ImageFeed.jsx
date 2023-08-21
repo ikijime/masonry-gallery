@@ -55,29 +55,30 @@ export default function Imagefeed() {
 
   useEffect(() => {
     checkAuth()
-  }, [])
+    if (sliderToogle) {
+      addClickDetectionHandler()
+    }
+  }, [sliderToogle])
 
   useEffect(() => {
     let unmounted = false
     setLoading(true)
-    if (sliderToogle) {
-      addClickDetectionHandler()
-    }
+    if (sliderToogle == false) {
     fetch(`/api/files/${page}`)
       .then((res) => res.json())
       .then((res) => {
-        !unmounted &&
+        !unmounted && 
           setImages((prevImages) => {
             let filtered = res.images.filter((item) => item.visible)
             return [...prevImages, ...filtered]
           })
-        setHasMore(res.images.length > 0)
+        setHasMore(() => res.images.length > 0)
         setLoading(false)
-      })
-      .catch(console.error)
+      })}
+      // .catch(console.error)
     return () => (unmounted = true)
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, sliderToogle])
+  }, [page])
 
   function checkAuth() {
     fetch('/api/auth')
@@ -90,23 +91,24 @@ export default function Imagefeed() {
 
   function handlerImgClick(e, idx) {
     if (window.screen.width < 600) {
+      
       window.open(e.target.getAttribute('fullimagelink'), '_self')
     } else {
       e.preventDefault()
-      setSliderToogle(!sliderToogle)
-      setImgIndex(idx)
+      setSliderToogle(() => !sliderToogle)
+      setImgIndex(() => idx)
     }
   }
 
   function prev() {
     if (imgIndex > 0) {
-      setImgIndex(imgIndex - 1)
+      setImgIndex(() => imgIndex - 1)
     }
   }
 
   function next() {
     if (imgIndex < images.length - 1) {
-      setImgIndex(imgIndex + 1)
+      setImgIndex(() => imgIndex + 1)
     }
   }
 
@@ -119,11 +121,11 @@ export default function Imagefeed() {
       document.exitFullscreen()
     }
 
-    if (e.keyCode === 40 && !document.fullscreenElement) {
+    if (e.key === 40 && !document.fullscreenElement) {
       setSliderToogle(false)
     }
 
-    if (e.keyCode === 27) setSliderToogle(!sliderToogle)
+    if (e.key === "Escape") setSliderToogle(!sliderToogle)
   }
 
   function handleTouchStart(e) {
@@ -255,9 +257,9 @@ export default function Imagefeed() {
               >
                 {images.map((image, index) => (
                   <img
-                    src={`${staticAddr}/${image.path}/${image.name}`}
-                    key={image.name}
                     loading='lazy'
+                    src={`${staticAddr}/${image.path}/${image.name}`}
+                    key={image.name + "0"}
                     alt={image.name}
                   />
                 ))}
@@ -290,7 +292,8 @@ export default function Imagefeed() {
                 src={`${staticAddr}${imagepath}/thumbnails/${image.name}`}
                 fullimagelink={`${staticAddr}${imagepath}/${image.name}`}
                 onClick={(e) => handlerImgClick(e, images.indexOf(image))}
-                loading='lazy'
+                key={image.name}
+                // loading='lazy'
                 alt={image.name}
               />
             </div>
